@@ -1,12 +1,12 @@
 {
-	"name": "usagi",
+	"name": "usagi-mq",
 	"description": "Simple library for effortless high-level RabbitMQ",
+	"version": "0.0.0",
 	"author": {
 		"name": "saltyaom",
 		"url": "https://github.com/SaltyAom",
 		"email": "saltyaom@gmail.com"
 	},
-	"version": "0.0.0",
 	"main": "build/index.js",
 	"module": "build/format/esm/index.js",
 	"esnext": "build/format/esm/index.js",

@@ -7,7 +7,7 @@
     "start": "ts-node src/index.ts"
   },
   "dependencies": {
-    "usagi": "../../"
+    "usagi-mq": "../../"
   },
   "devDependencies": {
     "ts-node": "^10.1.0",

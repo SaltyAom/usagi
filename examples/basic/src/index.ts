@@ -1,4 +1,4 @@
-import Usagi from 'usagi'
+import Usagi from 'usagi-mq'
 
 const queue = 'usagi_example_basic' as const
 
