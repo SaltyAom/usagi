@@ -27,7 +27,7 @@ export interface Consume extends Options.Consume {
 }
 
 export interface Send extends Options.Publish {
-	to: string | string[]
+	to: string
 	message: string | Object
 }
 
@@ -42,8 +42,8 @@ export interface CreateChannelOptions {
 	exchanges?: Exchange[]
 }
 
-export type UsagiMessage<T extends string | Object> = T
+export type UsagiMessage = String | Object
 
-export interface SendRPC extends Omit<Send, 'to' | 'correlationId' | 'replyTo'> {
+export interface SendRPC extends Omit<Send, 'to' | 'replyTo'> {
 	timeout?: number
 }

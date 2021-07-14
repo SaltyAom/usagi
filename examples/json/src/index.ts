@@ -1,4 +1,4 @@
-import Usagi from 'usagi'
+import Usagi from 'usagi-mq'
 
 const queue = 'usagi_example_json' as const
 
@@ -20,7 +20,7 @@ const main = async () => {
 		process.exit(0)
 	})
 
-	channel.sendJson({
+	channel.send({
 		to: queue,
 		message: {
 			message: 'Hello World'

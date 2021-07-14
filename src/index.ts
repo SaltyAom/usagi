@@ -287,13 +287,9 @@ export class UsagiChannel {
 		return exchangeName
 	}
 
-	public consume<T extends string | Object>(
+	public consume<T extends UsagiMessage>(
 		{ queue = '', ...options }: Consume,
-		callback: (
-			message: UsagiMessage<T>,
-			detail: Message,
-			ack: () => void
-		) => unknown
+		callback: (message: T, detail: Message, ack: () => void) => unknown
 	) {
 		const handleCallback = (message: Message | null) => {
 			if (!message) return
@@ -315,28 +311,16 @@ export class UsagiChannel {
 		return this
 	}
 
-	public send({ to, message, ...options }: Send) {
-		const queues = typeof to === 'string' ? [to] : to
+	public send({ to: queue, message, ...options }: Send) {
+		let isObject = typeof message === 'object'
 
-		queues.map((queue) => {
-			let parsedMessage =
-				typeof message === 'string' ? message : JSON.stringify(message)
+		let parsedMessage = isObject
+			? JSON.stringify(message)
+			: (message as string)
 
-			this.#channel.sendToQueue(
-				queue,
-				Buffer.from(parsedMessage),
-				options
-			)
-		})
-
-		return this
-	}
-
-	public sendJson({ message, ...options }: Omit<Send, 'contentType'>) {
-		this.send({
-			...options,
-			message: JSON.stringify(message),
-			contentType: 'application/json'
+		this.#channel.sendToQueue(queue, Buffer.from(parsedMessage), {
+			contentType: isObject ? 'application/json' : undefined,
+			...options
 		})
 
 		return this
@@ -348,7 +332,7 @@ export class UsagiChannel {
 		return this
 	}
 
-	public async sendRpc<T extends string | Object>(
+	public async sendRpc<T extends UsagiMessage>(
 		rpcQueue: string,
 		input: SendRPC
 	) {
@@ -368,18 +352,19 @@ export class UsagiChannel {
 
 		let roundtrip = new Promise<T>((resolve) => {
 			this.consume<T>({ queue }, (message, detail) => {
-				if (!message) return
-
-				if (detail.properties.correlationId === correlationId)
+				if (
+					message &&
+					detail.properties.correlationId === correlationId
+				)
 					resolve(message)
 			})
 		})
 
 		this.send({
+			correlationId,
 			...input,
 			to: rpcQueue,
-			replyTo: queue,
-			correlationId
+			replyTo: queue
 		})
 
 		let response = await roundtrip
@@ -391,7 +376,7 @@ export class UsagiChannel {
 		return response
 	}
 
-	public async consumeOnce<T extends string | Object>(queue: string) {
+	public async consumeOnce<T extends UsagiMessage>(queue: string) {
 		let consumed = await new Promise<T>((resolve) => {
 			this.consume<T>({ queue }, async (message) => {
 				resolve(message)
@@ -403,9 +388,9 @@ export class UsagiChannel {
 		return consumed
 	}
 
-	public async consumeRpc<T extends string | Object>(
+	public async consumeRpc<T extends UsagiMessage, R extends UsagiMessage = T>(
 		rpcQueue: string,
-		process: (response: T, message: Message) => T | Promise<T>
+		process: (response: T, message: Message) => R | Promise<R>
 	) {
 		let queue = await this.addQueue({
 			name: rpcQueue
