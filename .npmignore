@@ -1,0 +1,10 @@
+examples
+node_modules
+scripts
+scripts
+.git
+.gitignore
+.prettierrc
+tsconfig.json
+yarn-error.log
+yarn.lock

@@ -1,0 +1,45 @@
+{
+	"name": "usagi",
+	"description": "Simple library for effortless high-level RabbitMQ",
+	"author": {
+		"name": "saltyaom",
+		"url": "https://github.com/SaltyAom",
+		"email": "saltyaom@gmail.com"
+	},
+	"version": "0.0.0",
+	"main": "build/index.js",
+	"module": "build/format/esm/index.js",
+	"esnext": "build/format/esm/index.js",
+	"types": "build/index.d.ts",
+	"typings": "build/index.d.ts",
+	"keywords": [
+		"RabbitMQ",
+		"usagi",
+		"usagi.js",
+		"AMQP"
+	],
+	"homepage": "https://github.com/saltyaom/usagi",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/saltyaom/usagi"
+	},
+	"bugs": "https://github.com/SaltyAom/usagi/issues",
+	"license": "MIT",
+	"scripts": {
+		"build": "yarn build:main && yarn build:cjs && yarn build:esm",
+		"build:main": "tsc",
+		"build:cjs": "node scripts/cjs.js && yarn build:cjs:type",
+		"build:cjs:type": "tsc --emitDeclarationOnly --outDir build/format/cjs",
+		"build:esm": "node scripts/esm.js && yarn build:esm:type",
+		"build:esm:type": "tsc --emitDeclarationOnly --outDir build/format/esm"
+	},
+	"dependencies": {
+		"amqplib": "^0.8.0",
+		"nanoid": "^3.1.23"
+	},
+	"devDependencies": {
+		"@types/amqplib": "^0.8.1",
+		"esbuild": "^0.12.15",
+		"typescript": "^4.3.5"
+	}
+}
