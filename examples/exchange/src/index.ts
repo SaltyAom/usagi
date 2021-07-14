@@ -1,4 +1,4 @@
-import Usagi from 'usagi'
+import Usagi from 'usagi-mq'
 
 const exchange = 'usagi_example_exchange_basic' as const
 

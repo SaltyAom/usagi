@@ -1,4 +1,4 @@
-import Usagi from 'usagi'
+import Usagi from 'usagi-mq'
 
 const rpcQueue = 'usagic_example_rpc_queue' as const
 
