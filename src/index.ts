@@ -72,7 +72,7 @@ export default class Usagi {
 	}
 }
 
-class UsagiChannel {
+export class UsagiChannel {
 	#connection: Connection
 	#channel!: Channel
 	#queues: string[] = []

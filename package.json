@@ -1,7 +1,7 @@
 {
 	"name": "usagi-mq",
 	"description": "Simple library for effortless high-level RabbitMQ",
-	"version": "0.0.0",
+	"version": "0.0.3",
 	"author": {
 		"name": "saltyaom",
 		"url": "https://github.com/SaltyAom",
@@ -34,11 +34,12 @@
 		"build:esm:type": "tsc --emitDeclarationOnly --outDir build/format/esm"
 	},
 	"dependencies": {
+		"@types/amqplib": "^0.8.1",
 		"amqplib": "^0.8.0",
-		"nanoid": "^3.1.23"
+		"nanoid": "^3.1.23",
+		"usagi-mq": "^0.0.3"
 	},
 	"devDependencies": {
-		"@types/amqplib": "^0.8.1",
 		"esbuild": "^0.12.15",
 		"typescript": "^4.3.5"
 	}

@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/bin/node /Users/aomkhunpanitchot/.yarn/bin/yarn.js build
+  /usr/local/bin/node /Users/aomkhunpanitchot/.yarn/bin/yarn.js add @types/amqplip
 
 PATH: 
   /Users/aomkhunpanitchot/Downloads/google-cloud-sdk/bin:/Users/aomkhunpanitchot/miniconda3/bin:/Users/aomkhunpanitchot/miniconda3/condabin:/Users/aomkhunpanitchot/.yarn/bin:/Users/aomkhunpanitchot/.config/yarn/global/node_modules/.bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:/usr/local/share/dotnet:~/.dotnet/tools:/Library/Apple/usr/bin:/Users/aomkhunpanitchot/flutter/bin
@@ -14,36 +14,62 @@ Platform:
   darwin x64
 
 Trace: 
-  Invariant Violation: Script must exist
-      at invariant (/Users/aomkhunpanitchot/.yarn/lib/cli.js:2314:15)
-      at /Users/aomkhunpanitchot/.yarn/lib/cli.js:62387:11
-      at Generator.next (<anonymous>)
-      at step (/Users/aomkhunpanitchot/.yarn/lib/cli.js:310:30)
-      at /Users/aomkhunpanitchot/.yarn/lib/cli.js:328:14
-      at new Promise (<anonymous>)
-      at new F (/Users/aomkhunpanitchot/.yarn/lib/cli.js:5301:28)
-      at /Users/aomkhunpanitchot/.yarn/lib/cli.js:307:12
-      at realRunCommand (/Users/aomkhunpanitchot/.yarn/lib/cli.js:62472:23)
-      at action.action (/Users/aomkhunpanitchot/.yarn/lib/cli.js:62533:16)
+  Error: https://registry.yarnpkg.com/@types%2famqplip: Not found
+      at Request.params.callback [as _callback] (/Users/aomkhunpanitchot/.yarn/lib/cli.js:66988:18)
+      at Request.self.callback (/Users/aomkhunpanitchot/.yarn/lib/cli.js:140749:22)
+      at Request.emit (events.js:315:20)
+      at Request.<anonymous> (/Users/aomkhunpanitchot/.yarn/lib/cli.js:141721:10)
+      at Request.emit (events.js:315:20)
+      at IncomingMessage.<anonymous> (/Users/aomkhunpanitchot/.yarn/lib/cli.js:141643:12)
+      at Object.onceWrapper (events.js:421:28)
+      at IncomingMessage.emit (events.js:327:22)
+      at endReadableNT (_stream_readable.js:1327:12)
+      at processTicksAndRejections (internal/process/task_queues.js:80:21)
 
 npm manifest: 
   {
-    "name": "usagi",
-    "version": "1.0.0",
-    "main": "index.js",
-    "license": "MIT",
-    "scripts": {
-      "build": ""
-    },
-    "dependencies": {
-      "amqplib": "^0.8.0",
-      "nanoid": "^3.1.23"
-    },
-    "devDependencies": {
-      "@types/amqplib": "^0.8.1",
-      "esbuild": "^0.12.15",
-      "typescript": "^4.3.5"
-    }
+  	"name": "usagi-mq",
+  	"description": "Simple library for effortless high-level RabbitMQ",
+  	"version": "0.0.0",
+  	"author": {
+  		"name": "saltyaom",
+  		"url": "https://github.com/SaltyAom",
+  		"email": "saltyaom@gmail.com"
+  	},
+  	"main": "build/index.js",
+  	"module": "build/format/esm/index.js",
+  	"esnext": "build/format/esm/index.js",
+  	"types": "build/index.d.ts",
+  	"typings": "build/index.d.ts",
+  	"keywords": [
+  		"RabbitMQ",
+  		"usagi",
+  		"usagi.js",
+  		"AMQP"
+  	],
+  	"homepage": "https://github.com/saltyaom/usagi",
+  	"repository": {
+  		"type": "git",
+  		"url": "https://github.com/saltyaom/usagi"
+  	},
+  	"bugs": "https://github.com/SaltyAom/usagi/issues",
+  	"license": "MIT",
+  	"scripts": {
+  		"build": "yarn build:main && yarn build:cjs && yarn build:esm",
+  		"build:main": "tsc",
+  		"build:cjs": "node scripts/cjs.js && yarn build:cjs:type",
+  		"build:cjs:type": "tsc --emitDeclarationOnly --outDir build/format/cjs",
+  		"build:esm": "node scripts/esm.js && yarn build:esm:type",
+  		"build:esm:type": "tsc --emitDeclarationOnly --outDir build/format/esm"
+  	},
+  	"dependencies": {
+  		"amqplib": "^0.8.0",
+  		"nanoid": "^3.1.23"
+  	},
+  	"devDependencies": {
+  		"esbuild": "^0.12.15",
+  		"typescript": "^4.3.5"
+  	}
   }
 
 yarn manifest: 

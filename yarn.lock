@@ -135,3 +135,12 @@ url-parse@~1.5.1:
   dependencies:
     querystringify "^2.1.1"
     requires-port "^1.0.0"
+
+usagi-mq@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/usagi-mq/-/usagi-mq-0.0.3.tgz#45d0dd000068949cf2088957058ac122236282b7"
+  integrity sha512-pukINTMXXlXsZmAhIOAY1th1f1Om+4UFVLx3doHaVd2zWAkxJBQy8aIu0qAYPizR6KyPoDLm0OuDDNO3SQwEHw==
+  dependencies:
+    "@types/amqplib" "^0.8.1"
+    amqplib "^0.8.0"
+    nanoid "^3.1.23"
