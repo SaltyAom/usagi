@@ -1,4 +1,4 @@
-# usagi-mq
+# Usagi MQ
 Effortlessly use RabbitMQ in Nodejs.
 
 An RabbitMQ library which is:
@@ -7,6 +7,7 @@ An RabbitMQ library which is:
 - Written in TypeScript
 - Offers in both CommonJS and ES Module
 
+![Is the Order A Rabbit?](https://user-images.githubusercontent.com/35027979/151227509-a1954351-aabb-4bfa-8dba-ad7c7ccecd83.jpg)
 ###### Disclaimer: This library has no connection to "Is the Order a Rabbit?", I just put Chino here because I watch "Is the Order a Rabbit" and the library has the word "rabbit" in it. It's a good anime, go watch it.
 
 ## Why
@@ -73,7 +74,7 @@ yarn add usagi-mq
 pnpm add usagi-mq
 ```
 
-# Concept
+# Documentation
 UsagiMQ directly use as same philosophy of RabbitMQ, so if you're not sure about which config, you can also related to [RabbitMQ documentation](https://www.rabbitmq.com)
 
 Usagi MQ main building block is divided to 2 classes.
@@ -451,3 +452,11 @@ const url = usagi.url
 If you still have some question not answered reading the usagi documentation, you can refer to [RabbitMQ documentation](https://www.rabbitmq.com) or raise a new [issue](https://github.com/SaltyAom/usagi/issues/new) or contribute to the project (it's open-source after all).
 
 Hope the library have a good use to you, cheers!.
+
+![Rabbit House](https://user-images.githubusercontent.com/35027979/151228290-5b9fd23b-03e9-4c7a-9dda-4cc841fa1cca.jpg)
+
+[![forthebadge](https://forthebadge.com/images/badges/powered-by-black-magic.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/reading-6th-grade-level.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/uses-brains.svg)](https://forthebadge.com)
+
+###### To my FBI agent: I'm not a lolicon, please don't "FBI Open Up on me"
