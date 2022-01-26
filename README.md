@@ -169,7 +169,7 @@ await channel.send({
 })
 ```
 
-This will send to message to `usagi-queue` with the message of ("Is the Order a Rabbit?")[https://en.wikipedia.org/wiki/Is_the_Order_a_Rabbit], then the listener will receive the message to this queue.
+This will send to message to `usagi-queue` with the message of ["Is the Order a Rabbit?"](https://en.wikipedia.org/wiki/Is_the_Order_a_Rabbit), then the listener will receive the message to this queue.
 
 As you might have guessed, you can directly send `Object` here, usagi will handle the header and transformation pipeline and parsed once passed to consumer (listener).
 
