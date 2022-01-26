@@ -7,16 +7,20 @@ const main = async () => {
 	await usagi.connect()
 
 	let channel = await usagi.createChannel({
-		queues: [{ name: queue }]
+		queues: [{ name: queue, durable: false }]
+	})
+
+	process.on('exit', async () => {
+		await channel.destroy()
 	})
 
 	channel.consume<string>({ queue }, (message) => {
-		console.log('Got', message)
+		console.log('Got', message, 'from', queue)
 
 		process.exit(0)
 	})
 
-	channel.send({
+	await channel.send({
 		to: queue,
 		message: 'Hello World'
 	})

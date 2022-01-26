@@ -1,19 +1,19 @@
 import Usagi from 'usagi-mq'
 
 const exchange = 'usagi_example_exchange_basic' as const
+const queue = 'usagi_example_exchange_basic_queue' as const
 
 const main = async () => {
 	let usagi = new Usagi('amqp://localhost')
 	await usagi.connect()
 
 	let channel = await usagi.createChannel({
-		exchanges: [{ name: exchange, type: 'fanout', durable: false }]
+		exchanges: [{ name: exchange, durable: false }],
+		queues: [{ name: queue, bindTo: [exchange], durable: false }]
 	})
 
-	let queue = await channel.addQueue({
-		exclusive: true,
-		durable: false,
-		bindTo: [exchange]
+	process.on('exit', async () => {
+		await channel.destroy()
 	})
 
 	channel.consume<string>({ queue }, (message) => {

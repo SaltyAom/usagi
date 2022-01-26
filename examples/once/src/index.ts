@@ -1,4 +1,4 @@
-import Usagi from 'usagi'
+import Usagi from 'usagi-mq'
 
 const queue = 'usagi_example_once' as const
 
@@ -7,7 +7,11 @@ const main = async () => {
 	await usagi.connect()
 
 	let channel = await usagi.createChannel({
-		queues: [{ name: queue }]
+		queues: [{ name: queue, durable: false }]
+	})
+
+	process.on('exit', async () => {
+		await channel.destroy()
 	})
 
 	setTimeout(() => {

@@ -1,7 +1,7 @@
 {
 	"name": "usagi-mq",
-	"description": "Simple library for effortless high-level RabbitMQ",
-	"version": "0.0.4",
+	"description": "Effortlessly use RabbitMQ in Nodejs",
+	"version": "0.1.0",
 	"author": {
 		"name": "saltyaom",
 		"url": "https://github.com/SaltyAom",
@@ -15,7 +15,7 @@
 	"keywords": [
 		"RabbitMQ",
 		"usagi",
-		"usagi.js",
+		"usagi mq",
 		"AMQP"
 	],
 	"homepage": "https://github.com/saltyaom/usagi",
@@ -36,8 +36,7 @@
 	"dependencies": {
 		"@types/amqplib": "^0.8.1",
 		"amqplib": "^0.8.0",
-		"nanoid": "^3.1.23",
-		"usagi-mq": "^0.0.3"
+		"nanoid": "^3.1.23"
 	},
 	"devDependencies": {
 		"esbuild": "^0.12.15",

@@ -19,14 +19,16 @@ const main = async () => {
 
 	let channel = await usagi.createChannel()
 
+	process.on('exit', async () => {
+		await channel.destroy()
+	})
+
 	channel.consumeRpc<string>(rpcQueue, microservice)
 
-	let response = await channel.sendRpc<string>(rpcQueue, {
+	await channel.sendRpc<string>(rpcQueue, {
 		message: 'Hello from Main Service',
 		timeout: 5000
 	})
-
-	console.log('Main:', response)
 
 	process.exit(0)
 }
