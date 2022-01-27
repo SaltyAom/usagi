@@ -15,7 +15,6 @@ const microservice = async (response: string) => {
 
 const main = async () => {
 	let usagi = new Usagi('amqp://localhost')
-	await usagi.connect()
 
 	let channel = await usagi.createChannel()
 

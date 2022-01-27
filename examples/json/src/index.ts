@@ -8,7 +8,6 @@ interface Hello {
 
 const main = async () => {
 	let usagi = new Usagi('amqp://localhost')
-	await usagi.connect()
 
 	let channel = await usagi.createChannel({
 		queues: [{ name: queue, durable: false }]

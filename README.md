@@ -8,7 +8,7 @@ An RabbitMQ library which is:
 - Offers in both CommonJS and ES Module
 
 ![Is the Order A Rabbit?](https://user-images.githubusercontent.com/35027979/151227509-a1954351-aabb-4bfa-8dba-ad7c7ccecd83.jpg)
-###### Disclaimer: This library has no connection to "Is the Order a Rabbit?", I just put Chino here because I watch "Is the Order a Rabbit" and the library has the word "rabbit" in it. It's a good anime, go watch it.
+###### Disclaimer: This library has no connection to "Is the Order a Rabbit?", I just put Chino here because I watch "Is the Order a Rabbit" and the library has the word "rabbit" in it. It's a good anime, so go watch it.
 
 ## Why
 amqplib, the famous Nodejs RabbitMQ binding is kind of old.
@@ -33,7 +33,6 @@ const queue = 'usagi_example_basic' as const
 
 // Connect to RabbitMQ instance
 const usagi = new Usagi('amqp://localhost')
-await usagi.connect()
 
 // 1. Declare queue in the channel
 let channel = await usagi.createChannel({
@@ -91,7 +90,6 @@ import Usagi from 'usagi-mq'
 
 // Connect to RabbitMQ instance
 const usagi = new Usagi('amqp://localhost')
-await usagi.connect()
 
 // Create Channel
 const channel = await usagi.createChannel({
@@ -200,7 +198,6 @@ For Usagi, you can do the same declaratively with `createChannel`.
 Using `bindTo`, you can bind specific queue to exchange.
 ```typescript
 const usagi = new Usagi('amqp://localhost')
-await usagi.connect()
 
 const channel = await usagi.createChannel({
     exchanges: [{ name: 'usagi-exchange' }],
@@ -242,6 +239,46 @@ channel.consume<MyObject>({ queue: 'usagi-channel' }, (message) => {
     console.log('Got', message, 'from', queue)
 })
 ```
+
+## Routing key
+[Topic](https://www.rabbitmq.com/tutorials/tutorial-five-javascript.html) is a special type of exchange which can route the message to another exchange or key based on key.
+
+In Usagi, we can easily add topic key to `bindTo` on `createChannel` to add topic key to the exchagne.
+```typescript
+const channel = await usagi.createChannel({
+    exchanges: [{ name: 'usagi-exchange', type: 'topic' }],
+    queues: [{ 
+        name: 'usagi-queue', 
+        bindTo: [['usagi-exchange', 'order.a.rabbit']] 
+    }]
+})
+```
+
+Notice that `bindTo` and accept an 2d array? the second parameter is a routing key which usagi will handle binding of the queue to exchange.
+
+## Publish routing key
+By default `publish` will send the message to exchange with empty key.
+To specified routing key of the channel to send to, you can specified it in `to` in `publish`.
+```typescript
+await channel.publish({
+    exchange,
+    to: 'order.a.rabbit', // <--- routing key
+    message: 'Order an Usagi'
+})
+```
+
+This will send a message to the exchange which will then route to `channel` with routing key of `order.a.rabbit`.
+
+Just like RabbitMQ, if routing key with special character like `*.*.rabbit` will also work too.
+```typescript
+await channel.publish({
+    exchange,
+    to: '*.*.rabbit', // <--- Send to routing key end with `.rabbit`
+    message: 'Order an Usagi'
+})
+```
+
+For more explaination, please refers to [RabbitMQ documentation](https://www.rabbitmq.com/tutorials/tutorial-five-javascript.html).
 
 ## RPC
 RPC is basically a technique where you can send the message then wait for the response back.
@@ -406,7 +443,6 @@ If you are not satisfied with high-level function provided by usagi, you can go 
 
 ```typescript
 const usagi = new Usagi('amqp://localhost')
-await usagi.connect()
 
 let backupDelegator = await usagi.createChannel({
     queues: [{ name: queue, durable: false }]
@@ -421,7 +457,6 @@ If you required to get amqp connection for some reason, usagi got you cover.
 
 ```typescript
 const usagi = new Usagi('amqp://localhost')
-await usagi.connect()
 
 // get amqp channel instance
 const amqpConnection1 = usagi.connection
@@ -442,7 +477,6 @@ Useful when you want to validate the endpoint or filtering different endpoint ba
 ```typescript
 // Connect to RabbitMQ instance
 const usagi = new Usagi('amqp://localhost')
-await usagi.connect()
 
 // get endpoint url
 const url = usagi.url

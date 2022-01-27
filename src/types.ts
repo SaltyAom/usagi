@@ -3,7 +3,13 @@ import type { Options } from 'amqplib/properties'
 type ExchangeType = 'direct' | 'topic' | 'headers' | 'fanout'
 
 /**
- * Exchange's name to bind queue to.
+ * Exchange's name and key to bind to to bind queue to.
+ * 
+ * @example exchange only
+ * ['usagi-exchange']
+ * 
+ * @example exchange with key bind
+ * [['usagi-exchange', 'usagi-key']]
  */
 export type BindTo = string[] | string[][]
 
@@ -92,6 +98,8 @@ export interface Exchange extends AssertExchange {
 	name: string
 	/**
 	 * Exchange type
+	 * 
+	 * @default 'fanout'
 	 *
 	 * @see https://www.rabbitmq.com/tutorials/amqp-concepts.html#exchanges
 	 */

@@ -3,7 +3,7 @@ import type { Connection, Channel, Message } from 'amqplib/callback_api'
 
 import { nanoid } from 'nanoid'
 
-import { removeFromArray, clone } from './services'
+import { clone } from './services'
 
 import type {
 	Queue,
@@ -76,12 +76,9 @@ export default class Usagi {
 			exchanges: []
 		}
 	): Promise<UsagiChannel> {
-		if (!this.#connection)
-			throw new Error(
-				'Connection is missing, please call `await Usagi.connect()` first'
-			)
+		if (!this.#connection) await this.connect()
 
-		let channel = await new UsagiChannel(clone(this.#connection)).connect()
+		let channel = await new UsagiChannel(clone(this.#connection!)).connect()
 
 		await channel.addExchanges(exchanges)
 		await channel.addQueues(queues)
@@ -101,8 +98,8 @@ export default class Usagi {
 export class UsagiChannel {
 	#connection: Connection
 	#channel!: Channel
-	#queues: string[] = []
-	#exchanges: string[] = []
+	#queues = new Set<string>()
+	#exchanges = new Set<string>()
 
 	constructor(connection: Connection) {
 		this.#connection = connection
@@ -122,15 +119,13 @@ export class UsagiChannel {
 	 * })
 	 */
 	public async connect() {
-		let channel = await new Promise<Channel>((resolve) => {
+		this.#channel = await new Promise<Channel>((resolve) => {
 			this.#connection.createChannel((error, channel) => {
 				if (error) throw error
 
 				resolve(channel)
 			})
 		})
-
-		this.#channel = channel
 
 		return this
 	}
@@ -143,6 +138,14 @@ export class UsagiChannel {
 		return this.#channel
 	}
 
+	public get queues() {
+		return this.#queues
+	}
+
+	public get exchanges() {
+		return this.#exchanges
+	}
+
 	/**
 	 * Add new queue to the channel
 	 *
@@ -150,7 +153,7 @@ export class UsagiChannel {
 	 * * Not recommended to call manually, instead be strict to declarative schema of Usagi.
 	 */
 	public async addQueue({ name = '', bindTo = [], ...options }: Queue) {
-		if (name !== '' && this.#queues.includes(name)) return name
+		if (name !== '' && this.#queues.has(name)) return name
 
 		let queueName = await new Promise<string>((resolve) =>
 			this.#channel.assertQueue(
@@ -167,7 +170,7 @@ export class UsagiChannel {
 		)
 
 		await this.bindQueue(name, bindTo)
-		this.#queues.push(queueName)
+		this.#queues.add(queueName)
 
 		return queueName
 	}
@@ -179,11 +182,7 @@ export class UsagiChannel {
 	 * * Not recommended to call manually, instead be strict to declarative schema of Usagi.
 	 */
 	public async addQueues(queues: Queue[]) {
-		let queueNames = await Promise.all(
-			queues.map((queue) => this.addQueue(queue))
-		)
-
-		return queueNames
+		return await Promise.all(queues.map((queue) => this.addQueue(queue)))
 	}
 
 	/**
@@ -275,8 +274,7 @@ export class UsagiChannel {
 	 * * Not recommended to call manually, instead be strict to declarative schema of Usagi.
 	 */
 	public async removeQueue({ name = '', ...options }: DeleteQueue) {
-		if (!this.#queues.includes(name))
-			throw new Error(`${name} is not in queue`)
+		if (!this.#queues.has(name)) throw new Error(`${name} is not in queue`)
 
 		let totalDeleteMessage = await new Promise<number>((resolve) =>
 			this.#channel.deleteQueue(name, options, (error, ok) => {
@@ -286,7 +284,7 @@ export class UsagiChannel {
 			})
 		)
 
-		this.#queues = removeFromArray(name, this.#queues)
+		this.#queues.delete(name)
 
 		return totalDeleteMessage
 	}
@@ -307,7 +305,7 @@ export class UsagiChannel {
 	 * * Not recommended to call manually, instead be strict to declarative schema of Usagi.
 	 */
 	public async addExchange({ name, type = 'fanout', ...options }: Exchange) {
-		if (this.#exchanges.includes(name)) return name
+		if (this.#exchanges.has(name)) return name
 
 		let exchangeName = await new Promise<string>((resolve) =>
 			this.#channel.assertExchange(
@@ -324,7 +322,7 @@ export class UsagiChannel {
 			)
 		)
 
-		this.#exchanges.push(exchangeName)
+		this.#exchanges.add(exchangeName)
 
 		return exchangeName
 	}
@@ -349,7 +347,7 @@ export class UsagiChannel {
 	 * * Not recommended to call manually, instead be strict to declarative schema of Usagi.
 	 */
 	public async removeExchange({ name, ...options }: DeleteExchange) {
-		if (!this.#exchanges.includes(name))
+		if (!this.#exchanges.has(name))
 			return new Error(`${name} is not in exchange`)
 
 		let status = await new Promise<boolean>((resolve) =>
@@ -360,7 +358,7 @@ export class UsagiChannel {
 			})
 		)
 
-		if (status) this.#exchanges = removeFromArray(name, this.#exchanges)
+		if (status) this.#exchanges.delete(name)
 
 		return status
 	}
@@ -391,7 +389,7 @@ export class UsagiChannel {
 	 * ```
 	 */
 	public consume<T extends UsagiMessage>(
-		{ queue, ...options }: Consume,
+		{ queue, noAck = true, ...options }: Consume,
 		callback: (message: T, detail: Message, ack: () => void) => unknown
 	) {
 		const handleCallback = (message: Message | null) => {
@@ -403,12 +401,14 @@ export class UsagiChannel {
 				? JSON.parse(message.content.toString())
 				: message.content.toString()
 
-			callback(response, message, () => this.#channel.ack(message))
+			callback(response, message, () => {
+				if (!noAck) this.#channel.ack(message)
+			})
 		}
 
 		this.#channel.consume(queue, handleCallback, {
-			noAck: true,
-			...options
+			...options,
+			noAck
 		})
 
 		return this
@@ -580,14 +580,16 @@ export class UsagiChannel {
 				resolve()
 			})
 		})
-		
+
 		await Promise.all([
 			Promise.all(
-				this.#queues.map(
+				[...this.#queues].map(
 					(queue) =>
 						new Promise<void>((resolve) => {
 							this.#channel.purgeQueue(queue, (error) => {
 								if (error) throw Error(error)
+
+								this.#queues.delete(queue)
 
 								resolve()
 							})
@@ -595,7 +597,7 @@ export class UsagiChannel {
 				)
 			),
 			Promise.all(
-				this.#queues.map(
+				[...this.#exchanges].map(
 					(queue) =>
 						new Promise<void>((resolve) => {
 							this.#channel.deleteExchange(
@@ -603,6 +605,8 @@ export class UsagiChannel {
 								undefined,
 								(error) => {
 									if (error) throw Error(error)
+
+									this.#exchanges.delete(queue)
 
 									resolve()
 								}

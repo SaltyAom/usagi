@@ -4,7 +4,6 @@ const queue = 'usagi_example_once' as const
 
 const main = async () => {
 	let usagi = new Usagi('amqp://localhost')
-	await usagi.connect()
 
 	let channel = await usagi.createChannel({
 		queues: [{ name: queue, durable: false }]

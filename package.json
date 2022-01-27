@@ -1,22 +1,22 @@
 {
 	"name": "usagi-mq",
 	"description": "Effortlessly use RabbitMQ in Nodejs",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"author": {
 		"name": "saltyaom",
 		"url": "https://github.com/SaltyAom",
 		"email": "saltyaom@gmail.com"
 	},
-	"main": "build/index.js",
+	"main": "build/format/cjs/index.js",
 	"module": "build/format/esm/index.js",
 	"esnext": "build/format/esm/index.js",
 	"types": "build/index.d.ts",
 	"typings": "build/index.d.ts",
 	"keywords": [
 		"RabbitMQ",
-		"usagi",
-		"usagi mq",
-		"AMQP"
+		"RabbitMQ nodejs",
+		"usagi-mq",
+		"amqplib"
 	],
 	"homepage": "https://github.com/saltyaom/usagi",
 	"repository": {
@@ -34,12 +34,12 @@
 		"build:esm:type": "tsc --emitDeclarationOnly --outDir build/format/esm"
 	},
 	"dependencies": {
-		"@types/amqplib": "^0.8.1",
+		"@types/amqplib": "^0.8.2",
 		"amqplib": "^0.8.0",
-		"nanoid": "^3.1.23"
+		"nanoid": "^3.2.0"
 	},
 	"devDependencies": {
-		"esbuild": "^0.12.15",
-		"typescript": "^4.3.5"
+		"esbuild": "^0.14.14",
+		"typescript": "^4.5.5"
 	}
 }
